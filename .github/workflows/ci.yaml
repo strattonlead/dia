@@ -4,6 +4,10 @@ on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   lint_and_format:
@@ -20,3 +24,39 @@ jobs:
 
       - name: Check Format using Ruff
         run: ruff format --check --diff
+
+  build_and_push_images:
+    runs-on: ubuntu-latest
+    name: Build and Push Docker Images
+    if: github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push CPU Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.cpu
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/tts-dia:cpu
+            ${{ secrets.DOCKERHUB_USERNAME }}/tts-dia:cpu-${{ github.sha }}
+
+      - name: Build and Push GPU Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.gpu
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/tts-dia:gpu
+            ${{ secrets.DOCKERHUB_USERNAME }}/tts-dia:gpu-${{ github.sha }}
