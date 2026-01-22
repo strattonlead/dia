@@ -4,7 +4,7 @@
 # Run:   docker run --rm --gpus all -p 7860:7860 dia-gpu
 # Requires NVIDIA Container Toolkit on host.
 
-FROM pytorch/pytorch:2.1.2-cuda12.1-cudnn8-runtime
+FROM pytorch/pytorch:2.8.0-cuda12.8-cudnn9-runtime
 
 # Set non-interactive frontend
 ENV DEBIAN_FRONTEND=noninteractive
@@ -39,7 +39,7 @@ RUN pip install --upgrade pip && pip install --no-cache-dir .
 ENV PYTHONUNBUFFERED=1 \
     PYTHONPATH=/app \
     USE_GPU=true \
-    LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda-12.1/lib64:${LD_LIBRARY_PATH}
+    LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda-12.8/lib64:${LD_LIBRARY_PATH}
 
 # Expose Gradio default port
 ENV GRADIO_SERVER_NAME="0.0.0.0"
