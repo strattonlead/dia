@@ -18,8 +18,6 @@ dependencies = [
     "soundfile>=0.13.1",
     "torch==2.8.0",
     "torchaudio==2.8.0",
-    "triton==3.3.0 ; sys_platform == 'linux'",
-    "triton-windows==3.3.0.post18 ; sys_platform == 'win32'",
 ]
 
 [build-system]
