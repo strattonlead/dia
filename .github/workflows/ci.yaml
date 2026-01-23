@@ -11,7 +11,7 @@ on:
 
 jobs:
   lint_and_format:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64]
     name: Lint and Format
     steps:
       - uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
         run: ruff format --check --diff
 
   build_and_push_images:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64]
     name: Build and Push Docker Images
     if: github.event_name != 'pull_request'
     steps:
