@@ -32,8 +32,23 @@ COPY --chown=appuser:appuser . .
 RUN python3 -m venv /app/venv
 ENV PATH="/app/venv/bin:$PATH"
 
-# Install all project dependencies
-RUN pip install --upgrade pip && pip install --no-cache-dir .
+# Install all project dependencies (avoid re-downloading torch/torchaudio already in base image)
+RUN pip install --upgrade pip && \
+    python - <<'PY'
+import sys
+import tomllib
+from pathlib import Path
+from subprocess import check_call
+
+data = tomllib.loads(Path("pyproject.toml").read_text())
+deps = data["project"]["dependencies"]
+filtered = [
+    dep for dep in deps
+    if not dep.startswith("torch==") and not dep.startswith("torchaudio==")
+]
+check_call([sys.executable, "-m", "pip", "install", "--no-cache-dir", *filtered])
+PY
+RUN pip install --no-cache-dir --no-deps .
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
