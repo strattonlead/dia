@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  github-runner:
+    image: ghcr.io/actions/runner:latest
+    container_name: github-runner
+    restart: unless-stopped
+    environment:
+      # Replace with your GitHub org or repo URL
+      RUNNER_REPOSITORY_URL: "https://github.com/ORG/REPO"
+      # Replace with a short-lived registration token from GitHub
+      RUNNER_TOKEN: "REPLACE_WITH_RUNNER_TOKEN"
+      # Optional runner name/labels
+      RUNNER_NAME: "self-hosted-docker"
+      RUNNER_LABELS: "self-hosted,linux,x64"
+      # Allow running as root inside the container
+      RUNNER_ALLOW_RUNASROOT: "1"
+      # Optional work directory inside the container
+      RUNNER_WORKDIR: "/runner/_work"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - runner-data:/runner
+
+volumes:
+  runner-data:
